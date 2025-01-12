@@ -68,7 +68,7 @@ impl Display for Task {
             Some(value) => value.format("%Y-%m-%d %H:%M:%S").to_string(),
             None => "-".to_string()
         };
-        write!(f, "------------\nid: {} [{}]\nTask: {}\nCreated at: {}\nLast Update: {}", self.id, self.status, self.description, created_at, updated_at)
+        write!(f, "------------\nID: {} [{}]\nTask: {}\nCreated at: {}\nLast Update: {}", self.id, self.status, self.description, created_at, updated_at)
     }
 }
 
@@ -152,7 +152,7 @@ fn list_tasks(status: Option<Status>, tasks: Vec<Task>) {
         Some(s) => {
             let filtered_tasks: Vec<Task> = tasks.into_iter().filter(|task| task.status == s).collect(); 
             if filtered_tasks.is_empty() {
-                println!("No tasks with the status {}", s)
+                println!("No tasks found with the status {}", s)
             } else {
                 Task::print(&filtered_tasks)
             }
@@ -173,7 +173,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             if let Some(task) = tasks.iter_mut().find(|task| task.id == id) {
                 task.update_status(status);
                 write_db(FILE_PATH, &tasks)?;
-                println!("Successfully updated task {}.", id);
+                println!("Successfully updated task (ID: {}).", id);
             } else {
                 println!("Error: ID not found.")
             }
@@ -182,14 +182,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             if let Some(index) = tasks.iter().position(|task| task.id == id) {
                 tasks.remove(index);
                 write_db(FILE_PATH, &tasks)?;
-                println!("Successfully deleted task {}.", id);
+                println!("Successfully deleted task (ID: {}).", id);
             }
         }, 
         Command::Update(description, id) => {
             if let Some(task) = tasks.iter_mut().find(|task| task.id == id) {
                 task.update_description(description);
                 write_db(FILE_PATH, &tasks)?;
-                println!("Successfully updated task {}.", id);
+                println!("Successfully updated task (ID: {}).", id);
             } else {
                 println!("Error: ID not found.")
             }
@@ -199,7 +199,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             let new_task = Task::new(id, description); 
             tasks.push(new_task); 
             write_db(FILE_PATH, &tasks)?;
-            println!("Successfully added task.");
+            println!("Successfully added task (ID: {}).", id);
         }
     }
     Ok(()) 
@@ -337,5 +337,5 @@ mod tests {
             _ => panic!("Expected List command"),
         }
     }
-    
+
 }
